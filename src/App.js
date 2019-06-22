@@ -23,14 +23,17 @@ class App extends Component {
 
   handleCreate = () => {
     const { input, todos } = this.state;
-    this.setState({
-      input: '',
-      todos: todos.concat({
-        id: this.id++,
-        text: input,
-        checked: false
-      })
-    });
+
+    if (input.trim() !== '') {
+      this.setState({
+        input: '',
+        todos: todos.concat({
+          id: this.id++,
+          text: input,
+          checked: false
+        })
+      });
+    }
   }
 
   handleKeyPress = (e) => {
