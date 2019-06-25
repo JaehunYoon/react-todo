@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+
 import TodoTemplate from './components/TodoTemplate';
 import Form from "./components/Form";
 import TodoItemList from './components/TodoItemList';
@@ -7,14 +9,29 @@ import Palette from './components/Palette';
 const colors = ['#343a40', '#f03e3e', '#12b886', '#228ae6'];
 
 class App extends Component {
-  id = 3
+  componentDidMount() {
+    this.initialize();
+  }
+
+  initialize = async () => {
+    const { todos } = this.state;
+    await axios
+      .get("http://localhost:8080/api/todos")
+      .then(res => {
+        this.setState({
+          todos: todos.concat(res.data)
+        })
+      })
+    this.setState(
+      {id: this.state.todos.length + 1}
+    )
+    console.log(this.state.todos)
+  };
+
+  
   state = {
     input : '',
-    todos: [
-      { id: 0, text: 'foo', checked: false },
-      { id: 1, text: 'bar', checked: true},
-      { id: 2, text: 'baz', checked: false }
-    ],
+    todos: [],
     color: '#343a40'
   }
 
@@ -31,7 +48,7 @@ class App extends Component {
       this.setState({
         input: '',
         todos: todos.concat({
-          id: this.id++,
+          id: this.state.id++,
           text: input,
           checked: false,
           color
