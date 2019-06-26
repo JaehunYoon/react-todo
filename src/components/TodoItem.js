@@ -15,7 +15,7 @@ class TodoItem extends Component {
                     e.stopPropagation();
                     onRemove(id);
                 }}>&times;</div>
-                <div style={{ color }} className={ `todo-text${checked ? ' checked' : ''}`}>
+                <div style={!checked ? { color } : {}} className={ `todo-text${checked ? ' checked' : ''}`}>
                     {text}
                 </div>
                     { checked && (<div className="check-mark">✓</div>) }

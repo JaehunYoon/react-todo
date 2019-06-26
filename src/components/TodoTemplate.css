@@ -1,9 +1,3 @@
-@font-face {
-    font-family: "Indie Flower";
-    font-style: normal;
-    src: url("https://fonts.googleapis.com/css?family=Indie+Flower&display=swap")
-}
-
 .todo-list-template {
     background: white;
     width: 512px;
