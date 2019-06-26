@@ -9,30 +9,41 @@ import Palette from './components/Palette';
 const colors = ['#343a40', '#f03e3e', '#12b886', '#228ae6'];
 
 class App extends Component {
+  constructor(state) {
+    super(state);
+    this.state = {
+      input: '',
+      todos: [],
+      color: '#343a40'
+    };
+    this.id = 0;
+  }
+
   componentDidMount() {
     this.initialize();
   }
 
-  initialize = async () => {
-    const { todos } = this.state;
+  initialize = async () => { 
     await axios
-      .get("http://localhost:8080/api/todos")
+      .get(`http://localhost:8080/api/todos`)
       .then(res => {
-        this.setState({
-          todos: todos.concat(res.data)
-        })
-      })
-    this.setState(
-      {id: this.state.todos.length + 1}
-    )
-    console.log(this.state.todos)
+        res.data.forEach(element => {
+          this.getTodo(element);
+        }
+      )
+    })
   };
 
-  
-  state = {
-    input : '',
-    todos: [],
-    color: '#343a40'
+  getTodo = (element) => {
+    const { todos } = this.state;
+    this.setState({
+      todos: todos.concat({
+        id: this.id++,
+        text: element.text,
+        checked: element.checked,
+        color: element.color
+      })
+    })
   }
 
   handleChange = (e) => {
@@ -48,12 +59,17 @@ class App extends Component {
       this.setState({
         input: '',
         todos: todos.concat({
-          id: this.state.id++,
+          id: this.id++,
           text: input,
           checked: false,
           color
         })
       });
+      // axios.post("http://localhost:8080/api/todos", {
+      //   text: input,
+      //   checked: false,
+      //   color: color
+      // })
     }
   }
 
@@ -109,7 +125,8 @@ class App extends Component {
           <Palette
             colors={colors}
             selected={color}
-            onSelect={handleSelectColor} />)}
+            onSelect={handleSelectColor}
+          />)}
         form={(
           <Form 
             value={input}
@@ -119,7 +136,11 @@ class App extends Component {
             color={color}
           />
         )}>
-        <TodoItemList todos={todos} onToggle={handleToggle} onRemove={handleRemove}/>
+        <TodoItemList
+          todos={todos}
+          onToggle={handleToggle}
+          onRemove={handleRemove}
+        />
       </TodoTemplate>
     )
   }
