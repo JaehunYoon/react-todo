@@ -16,7 +16,6 @@ class App extends Component {
       todos: [],
       color: '#343a40'
     };
-    this.id = 0;
   }
 
   componentDidMount() {
@@ -38,7 +37,7 @@ class App extends Component {
     const { todos } = this.state;
     this.setState({
       todos: todos.concat({
-        id: this.id++,
+        id: element.id,
         text: element.text,
         checked: element.checked,
         color: element.color
@@ -56,20 +55,21 @@ class App extends Component {
     const { input, todos, color } = this.state;
 
     if (input.trim() !== '') {
-      this.setState({
-        input: '',
-        todos: todos.concat({
-          id: this.id++,
-          text: input,
-          checked: false,
-          color
-        })
-      });
-      // axios.post("http://localhost:8080/api/todos", {
-      //   text: input,
-      //   checked: false,
-      //   color: color
-      // })
+      axios.post("http://localhost:8080/api/todos", {
+        text: input,
+        checked: false,
+        color: color
+      }).then(res => {
+        this.setState({
+          input: '',
+          todos: todos.concat({
+            id: res.data.id,
+            text: input,
+            checked: false,
+            color
+          })
+        });
+      })
     }
   }
 
@@ -93,6 +93,7 @@ class App extends Component {
     this.setState({
       todos: nextTodos
     });
+    axios.patch(`http://localhost:8080/api/todos/${id}`)
   }
 
   handleRemove = (id) => {
@@ -100,6 +101,7 @@ class App extends Component {
     this.setState({
       todos: todos.filter(todo => todo.id !== id)
     })
+    axios.delete(`http://localhost:8080/api/todos/${id}`)
   }
 
   handleSelectColor = (color) => {
